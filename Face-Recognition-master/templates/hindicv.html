@@ -1,0 +1,81 @@
+{%  extends 'layout.html' %}
+
+{% block body %}
+    <h1>Fill Your Details :</h1>
+    {% from "includes/_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        <div class="form-group">
+            {{render_field(form.cvname, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.name, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.email, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.contact, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.fathername, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.address, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.residance, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.dob, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.lang, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.gb, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.gm, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.gp, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.gs, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tb, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tm, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tp, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.ts, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tvb, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tvm, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tvp, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.tvs, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.projetcs, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.skills, class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{render_field(form.achievements, class_="form-control")}}
+        </div>
+        <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+    </form>
+{% endblock %}

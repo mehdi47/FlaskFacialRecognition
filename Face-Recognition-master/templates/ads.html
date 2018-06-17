@@ -1,0 +1,10 @@
+{%  extends 'layout.html' %}
+
+{% block body %}
+    <h1>Ads</h1>
+    <ul class="list-group">
+      {% for ad in ads %}
+        <li class="list-group-item"><a href="ad/{{ad.id}}">{{ad.title}}</a></li>
+      {% endfor %}
+    </ul>
+{% endblock %}
