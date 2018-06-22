@@ -1,11 +1,29 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 from data import Ads
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, FileField, validators
 from passlib.hash import sha256_crypt
-
+from flask_uploads import UploadSet, IMAGES, configure_uploads, patch_request_class
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+import os
 
 app = Flask(__name__)
+
+# Uploads
+UPLOADS_DEFAULT_DEST = '/img/'
+UPLOADS_DEFAULT_URL = 'http://localhost:5000/img'
+
+UPLOADED_FILES_DEST = '/img'
+UPLOADED_FILES_URL = 'http://localhost:5000/img'
+
+# Configure the image uploading via Flask-Uploads
+photos = UploadSet('photos', IMAGES)
+app.config['UPLOADED_PHOTOS_DEST'] = UPLOADED_FILES_DEST
+# app.config['UPLOADED_DEFAULT_DEST'] = UPLOADS_DEFAULT_DEST
+# app.config['UPLOADED_PHOTOS_URL'] = UPLOADED_FILES_URL
+# app.config['UPLOADED_DEFAULT_URL'] = UPLOADS_DEFAULT_URL
+configure_uploads(app, photos)
+patch_request_class(app , 32 * 1024 * 1024)
 
 # Config MYSQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -26,7 +44,9 @@ def index():
 def about():
     return render_template('about.html')
 
-
+# @app.route('/testt')
+# def about2():
+#     return render_template('test.html')
 
 @app.route('/ads')
 def ads():
@@ -46,6 +66,7 @@ class RegisterForm(Form):
         validators.EqualTo('confirm',message='passwords do not match')
     ])
     confirm = PasswordField('confirm password')
+    photo = FileField('Photo', validators=[FileAllowed(photos, 'Images only!')])
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -56,6 +77,10 @@ def register():
         username = form.username.data
         email = form.email.data
         password = sha256_crypt.encrypt(str(form.password.data))
+        file = request.files['photo']
+        filename = file.filename
+        file.save(os.path.join('img', filename))
+        file_url = photos.url(filename)
 
         # Create Cursor
         cur = mysql.connection.cursor()
@@ -137,15 +162,16 @@ def select():
 
         # Create Cursor
         cur = mysql.connection.cursor()
-
+        curr = mysql.connection.cursor()
         # Execute Query
-        cur.execute(("insert into cv_hindi(cv_name,user_fullname,user_email,user_contact,user_address,user_residance,user_birthdate,user_languages,user_gcollege,user_gsubjects,user_gyear,user_gmark,user_tnboard,user_tnsubject,user_tnpassyear,user_tnmark,user_twboard,user_twstream,user_twpassyear,user_twmark,user_projects,user_skills,user_achievements) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')")%(cvname, name, email, contact,  address, residance, dob, lang, gb, gm, gp, gs, tb, tp, tm, ts, tvb, tvs, tvp, tvm, projetcs, skills, achievements))
-
+        cur.execute(("insert into cv_hindi(cv_name,user_fullname,user_email,user_contact,user_address,user_residance,user_birthdate,user_languages,user_gcollege,user_gsubjects,user_gyear,user_gmark,user_tnboard,user_tnsubject,user_tnpassyear,user_tnmark,user_twboard,user_twstream,user_twpassyear,user_twmark,user_projects,user_skills,user_achievements) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')")%(cvname, name, email, contact,  address, residance, dob, lang, gb, gm, gp, gs, tb, ts, tp, tm, tvb, tvs, tvp, tvm, projetcs, skills, achievements))
+        curr.execute(("insert into user(cv_name) values('%s')")%(cvname))
         # Commit to DB
         mysql.connection.commit()
 
-        cur.close()
 
+        cur.close()
+        curr.close()
         flash('you are now registered and can log in', 'success')
 
         return render_template('cv.html', cvname = cvname, name = name, email = email, contact = contact, dob = dob, lang = lang, address = address,
